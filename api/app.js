@@ -11,20 +11,42 @@ const supabase = createClient(
     process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-app.post('/send-pair-to-db', async (req, res) => {
+app.post('/send-pair', async (req, res) => {
     const { UUID, ipAddress } = req.body;
-    
+
     if (!UUID || !ipAddress) {
-        return req.status(400).json({ error: 'Something got wrong.' });
+        return res.status(400).json({ error: 'Something got wrong.' });
     }
 
     const { data, error } = await supabase
-        .from('use-pairs')
+        .from('data-pairs')
         .insert([{ UUID, ipAddress }]);
-    
+
     if (error) return res.status(500).json({ error: error.message });
 
     res.status(201).json({ success: true, data });
+});
+
+app.post('/check-pair', async (req, res) => {
+    const { UUID, ipAddress } = req.body;
+
+    if (!UUID || !ipAddress) {
+        return res.status(400).json({ error: 'Missing UUID or IP address.' });
+    }
+
+    const { data, error } = await supabase
+        .from('data-pairs')
+        .select('*')
+        .eq('UUID', UUID)
+        .eq('ipAddress', ipAddress);
+
+    if (error) return res.status(500).json({ error: error.message });
+
+    if (data.length > 0) {
+        return res.status(200).json({ valid: true });
+    } else {
+        return res.status(404).json({ valid: false });
+    }
 });
 
 app.listen(PORT, () => {
