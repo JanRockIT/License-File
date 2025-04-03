@@ -5,17 +5,19 @@ import requests
 
 print("Welcome to the product from *DAX_knoel*")
 
-# if input("Do you want to register the product? (Y/n): ").lower() not in ["", " ", "  ", "   ", "    ", "y", "ye", "yes", "ys", "yse", "sye"]:
-#     sys.exit("The product is still unused.")
-
 uuid = input("Your product key: ")
-ip = get_ip()
 
+ip = get_ip()
 if ip.startswith("Error"):
     sys.exit(ip)
 
+check_uuid_url = "https://license-file.onrender.com/check-uuid"
 send_pair_url = "https://license-file.onrender.com/send-pair"
 check_pair_url = "https://license-file.onrender.com/check-pair"
+
+check_uuid_response = requests.post(check_uuid_url, json={"UUID": uuid})
+if check_uuid_response.status_code != 200:
+    sys.exit("Ungültiger Product Key.")
 
 payload = {
     "UUID": uuid,
@@ -23,12 +25,10 @@ payload = {
 }
 
 send_pair_response = requests.post(send_pair_url, json=payload)
-
 if send_pair_response.status_code != 201:
     sys.exit(send_pair_response.json())
 
 check_pair_response = requests.post(check_pair_url, json=payload)
-
 if check_pair_response.status_code != 200:
     sys.exit(check_pair_response.json())
 

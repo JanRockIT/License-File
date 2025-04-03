@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import { createClient } from '@supabase/supabase-js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 app.use(express.json());
@@ -85,6 +87,22 @@ app.post('/check-uuid', async (req, res) => {
     } else {
         return res.status(404).json({ valid: false });
     }
+});
+
+// __dirname für ES Modules ermitteln
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Datei-Download Route
+app.get('/get-product', (req, res) => {
+    const filePath = path.join(__dirname, 'product.exe'); // oder z. B. 'files/product.exe'
+
+    res.download(filePath, 'product.exe', (err) => {
+        if (err) {
+            console.error('Fehler beim Senden:', err);
+            res.status(500).send('Fehler beim Herunterladen der Datei.');
+        }
+    });
 });
 
 app.listen(PORT, () => {
