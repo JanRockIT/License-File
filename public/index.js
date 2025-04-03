@@ -38,6 +38,6 @@ document.getElementById('generateBtn').addEventListener('click', async function 
 
     // Konfiguriere den Download-Button
     document.getElementById('downloadBtn').addEventListener('click', function () {
-        window.location.href = '/product.exe';
+        window.location.href = 'https://license-file.onrender.com/get-product';
     });
 });
