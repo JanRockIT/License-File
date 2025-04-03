@@ -1,5 +1,5 @@
 import express from 'express';
-const cors = require('cors');
+import cors from 'cors';
 import { createClient } from '@supabase/supabase-js';
 
 const app = express();
